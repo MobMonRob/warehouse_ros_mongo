@@ -44,15 +44,15 @@
 
 namespace warehouse_ros_mongo
 {
-using warehouse_ros::MessageCollectionHelper;
 using warehouse_ros::Metadata;
 using warehouse_ros::Query;
+using warehouse_ros::MessageCollectionHelper;
 using warehouse_ros::ResultIteratorHelper;
 
 class MongoMessageCollection : public warehouse_ros::MessageCollectionHelper
 {
 public:
-  MongoMessageCollection(const std::shared_ptr<mongo::DBClientConnection>& conn, const std::string& db_name,
+  MongoMessageCollection(boost::shared_ptr<mongo::DBClientConnection> conn, const std::string& db_name,
                          const std::string& collection_name);
 
   bool initialize(const std::string& datatype, const std::string& md5);
@@ -110,13 +110,13 @@ private:
     return *(const_cast<MongoQuery*>(static_cast<const MongoQuery*>(query.get())));
   }
 
-  std::shared_ptr<mongo::DBClientConnection> conn_;
-  std::shared_ptr<mongo::GridFS> gfs_;
+  boost::shared_ptr<mongo::DBClientConnection> conn_;
+  boost::shared_ptr<mongo::GridFS> gfs_;
   const std::string ns_;
   const std::string db_;
   const std::string coll_;
 };
 
-}  // namespace warehouse_ros_mongo
+}  // namespace
 
 #endif  // include guard

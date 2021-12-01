@@ -46,13 +46,7 @@ using std::string;
 
 MongoDatabaseConnection::MongoDatabaseConnection() : host_("localhost"), port_(27017), timeout_(60.0)
 {
-  static bool initialized = false;  // Initialize only once
-  // libmongoclient 1.1.2 (in Bionic) doesn't require this anymore
-  if (!initialized)
-  {
-    initialized = true;
-    mongo::client::initialize();
-  }
+  mongo::client::initialize();
 }
 
 bool MongoDatabaseConnection::setParams(const string& host, unsigned port, float timeout)
@@ -117,7 +111,7 @@ string MongoDatabaseConnection::messageType(const string& db, const string& coll
   if (!isConnected())
     throw warehouse_ros::DbConnectException("Cannot look up metatable.");
   const string meta_ns = db + ".ros_message_collections";
-  CursorPtr cursor = conn_->query(meta_ns, BSON("name" << coll));
+  std::unique_ptr<mongo::DBClientCursor> cursor = conn_->query(meta_ns, BSON("name" << coll));
   mongo::BSONObj obj = cursor->next();
   return obj.getStringField("type");
 }
@@ -128,6 +122,6 @@ MessageCollectionHelper::Ptr MongoDatabaseConnection::openCollectionHelper(const
   return typename MessageCollectionHelper::Ptr(new MongoMessageCollection(conn_, db_name, collection_name));
 }
 
-}  // namespace warehouse_ros_mongo
+}  // namespace
 
 PLUGINLIB_EXPORT_CLASS(warehouse_ros_mongo::MongoDatabaseConnection, warehouse_ros::DatabaseConnection)

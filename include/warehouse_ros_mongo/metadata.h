@@ -85,7 +85,7 @@ public:
   }
 
 protected:
-  std::shared_ptr<BSONObjBuilder> builder_;
+  boost::shared_ptr<BSONObjBuilder> builder_;
 
   void update()
   {
@@ -310,6 +310,6 @@ private:
   }
 };
 
-}  // namespace warehouse_ros_mongo
+}  // namespace
 
 #endif  // include guard

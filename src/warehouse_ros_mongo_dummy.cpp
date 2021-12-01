@@ -28,50 +28,25 @@
  *
  */
 
-/**
- * \file
- *
- * Db-level operations.  Most operations are in message_collection.h
- *
- * \author Bhaskara Marthi
- */
+#include <warehouse_ros_mongo/metadata.h>
 
-#ifndef WAREHOUSE_ROS_MONGO_DATABASE_CONNECTION_H
-#define WAREHOUSE_ROS_MONGO_DATABASE_CONNECTION_H
-
-#include <warehouse_ros/database_connection.h>
-#include <warehouse_ros_mongo/message_collection.h>
-#include <boost/shared_ptr.hpp>
-
-namespace warehouse_ros_mongo
+// add this dummy function so the .so file copies everything we need from the
+// libmongoclient.a file at link time. We need this because Ubuntu does not install
+// a .so file for libmongoclient and the wrappers we have in this lib are templated.
+// make this function globally accessible so strip --strip-unneeded does not remove symbols
+void _thisFunctionShouldNeverBeCalled_MakeWarehouseROSMongoIncludeTheSymbolsWeNeed_(void)
 {
-class MongoDatabaseConnection : public warehouse_ros::DatabaseConnection
-{
-public:
-  MongoDatabaseConnection();
-
-  bool setParams(const std::string& host, unsigned port, float timeout);
-
-  bool setTimeout(float timeout);
-
-  bool connect();
-
-  bool isConnected();
-
-  void dropDatabase(const std::string& db_name);
-
-  std::string messageType(const std::string& db_name, const std::string& collection_name);
-
-protected:
-  boost::shared_ptr<mongo::DBClientConnection> conn_;
-
-  std::string host_;
-  unsigned port_;
-  float timeout_;
-
-  MessageCollectionHelper::Ptr openCollectionHelper(const std::string& db_name, const std::string& collection_name);
-};
-
-}  // namespace
-
-#endif  // include guard
+  mongo::DBClientConnection* conn = new mongo::DBClientConnection();
+  mongo::GridFS* gfs = new mongo::GridFS(*conn, "");
+  mongo::BSONObj q;
+  mongo::GridFile f = gfs->findFile(q);
+  f.write(std::cout);
+  gfs->removeFile("");
+  q = gfs->storeFile(NULL, 0, "");
+  mongo::LT;
+  mongo::GT;
+  mongo::LTE;
+  mongo::GTE;
+  delete gfs;
+  delete conn;
+}

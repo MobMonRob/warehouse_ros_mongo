@@ -47,12 +47,15 @@
 
 namespace warehouse_ros_mongo
 {
-typedef std::unique_ptr<mongo::DBClientCursor> CursorPtr;
+// To avoid some const-correctness issues we wrap Mongo's returned auto_ptr in
+// another pointer
+typedef std::unique_ptr<mongo::DBClientCursor> Cursor;
+typedef boost::shared_ptr<Cursor> CursorPtr;
 
 class MongoResultIterator : public warehouse_ros::ResultIteratorHelper
 {
 public:
-  MongoResultIterator(const std::shared_ptr<mongo::DBClientConnection>& conn, std::shared_ptr<mongo::GridFS> gfs,
+  MongoResultIterator(boost::shared_ptr<mongo::DBClientConnection> conn, boost::shared_ptr<mongo::GridFS> gfs,
                       const std::string& ns, const mongo::Query& query);
   bool next();
   bool hasData() const;
@@ -63,9 +66,9 @@ public:
 private:
   CursorPtr cursor_;
   boost::optional<mongo::BSONObj> next_;
-  std::shared_ptr<mongo::GridFS> gfs_;
+  boost::shared_ptr<mongo::GridFS> gfs_;
 };
 
-}  // namespace warehouse_ros_mongo
+}  // namespace
 
 #endif  // include guard
